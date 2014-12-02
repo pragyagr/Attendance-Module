@@ -17,7 +17,7 @@ def onclick_view():
     def getvalue():
         E1_data = v1.get()
         E2_data = v2.get()
-        print '%s' %E1_data
+        
     win1.destroy()
     
     win2=Tk()
@@ -29,14 +29,19 @@ def onclick_view():
     v1.set("mm/dd/yy")
     v2.set("mm/dd/yy")
 
+    #date:2.12.14 . by:Pragya. for dropdownlist of "to" and "from"
+    cur = db.cursor()
+    cur.execute("select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA= 'student' and TABLE_NAME = 'attendance'")
+    a = cur.fetchall()
+    list = []
+    for i in range(2, len(a)):
+        list.append(a[i][0])
+    
     L = Label(win2, text="Subject: %s" %variable.get() ).pack()    
     L2= Label(win2, text="From:").pack()
-    #E1 = Entry(win2, textvariable = v1).pack()
-    from_option = OptionMenu(win2, v1,"date" ).pack()
+    from_option = OptionMenu(win2, v1,*list ).pack()
     L3= Label(win2, text="To:").pack()
-    to_option = OptionMenu(win2, v2, "date" ).pack()
-    #E2 = Entry(win2, textvariable = v2).pack()
-    
+    to_option = OptionMenu(win2, v2, *list ).pack()
     button3 = Button(win2, text="OK", command = getvalue ).pack()
 
     win2.mainloop()
