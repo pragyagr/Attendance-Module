@@ -41,9 +41,9 @@ def onclick_view():
     
     L = Label(win2, text="Subject: %s" %variable.get() ).pack()    
     L2= Label(win2, text="From:").pack()
-    from_option = OptionMenu(win2, v1,*list ).pack()
+    from_option = OptionMenu(win2, v1,*list).pack()
     L3= Label(win2, text="To:").pack()
-    to_option = OptionMenu(win2, v2, *list ).pack()
+    to_option = OptionMenu(win2, v2, *list).pack()
     button3 = Button(win2, text="OK", command = getvalue ).pack()
 
     win2.mainloop()
@@ -55,10 +55,10 @@ def onclick_mark():
     cur = db.cursor()
 
     date = time.strftime("%x")
-    cur.execute("SHOW COLUMNS FROM attendance LIKE '%s'" %date) # code for adding column when it doesn't exist 
+    cur.execute("SHOW COLUMNS FROM %s LIKE '%s'" %(subject,date)) # code for adding column when it doesn't exist 
     exist = cur.fetchone()                                      # code for adding column when it doesn't exist 
     if exist is None:                                           # code for adding column when it doesn't exist 
-        cur.execute("ALTER TABLE attendance ADD `%s` INT(2) NOT NULL DEFAULT '0'" %date)    
+        cur.execute("ALTER TABLE %s ADD `%s` INT(2) NOT NULL DEFAULT '0'" %(subject,date))    
     
     def onclick_next():
         try:
