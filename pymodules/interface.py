@@ -17,8 +17,42 @@ def onclick_view():
     subject = variable.get()
     
     def getvalue():
+
+        #showing attendance of each student from selected dates
+
+        
         E1_data = v1.get()
         E2_data = v2.get()
+        print E1_data
+        print E2_data
+
+        col_list=[]
+        v1_index = list.index(E1_data)
+        v2_index = list.index(E2_data)
+        print v1_index
+        print v2_index
+        if v1_index<v2_index:
+            col_list = list[v1_index:v2_index+1]
+        else:
+            col_list = list[v2_index:v1_index+1]
+        
+        print col_list
+        print len(col_list)
+        
+        cur.execute("SELECT Roll_Number, Name, %s FROM %s"  %((', '.join(col_list)),subject))
+        result_set = cur.fetchall()
+        for row in result_set:
+            print "%d, %s," % (row[0], row[1])
+            for num in range(len(col_list)):
+                print "%d," %(row[num+2])
+                
+
+        '''import Tkinter
+        root = Tkinter.Tk(  )
+        for r in result_set:
+            for c in range(2+len(col_list)):
+                Tkinter.Label(root, text='Row[%ss]'%(c),borderwidth=1 ).grid(row=r,column=c)
+        root.mainloop(  )'''
         
     win1.destroy()
     
@@ -38,13 +72,15 @@ def onclick_view():
     list = []
     for i in range(2, len(a)):
         list.append(a[i][0])
-    
-    L = Label(win2, text="Subject: %s" %variable.get() ).pack()    
-    L2= Label(win2, text="From:").pack()
-    from_option = OptionMenu(win2, v1,*list).pack()
-    L3= Label(win2, text="To:").pack()
-    to_option = OptionMenu(win2, v2, *list).pack()
-    button3 = Button(win2, text="OK", command = getvalue ).pack()
+    if list:
+        L = Label(win2, text="Subject: %s" %variable.get() ).pack()    
+        L2= Label(win2, text="From:").pack()
+        from_option = OptionMenu(win2, v1,*list).pack()
+        L3= Label(win2, text="To:").pack()
+        to_option = OptionMenu(win2, v2, *list).pack()
+        button3 = Button(win2, text="OK", command = getvalue ).pack()
+    else:
+        L = Label(win2, text="There is no attendance to view").pack()
 
     win2.mainloop()
 
