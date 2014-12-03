@@ -55,7 +55,10 @@ def onclick_mark():
     cur = db.cursor()
 
     date = time.strftime("%x")
-    cur.execute("ALTER TABLE %s ADD `%s` INT(2) NOT NULL DEFAULT '0'" %(subject,date))
+    cur.execute("SHOW COLUMNS FROM attendance LIKE '%s'" %date) # code for adding column when it doesn't exist 
+    exist = cur.fetchone()                                      # code for adding column when it doesn't exist 
+    if exist is None:                                           # code for adding column when it doesn't exist 
+        cur.execute("ALTER TABLE attendance ADD `%s` INT(2) NOT NULL DEFAULT '0'" %date)    
     
     def onclick_next():
         try:
