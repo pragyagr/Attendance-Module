@@ -14,6 +14,8 @@ device = 'COM4'
 flag = 0
 
 def onclick_view():
+    subject = variable.get()
+    
     def getvalue():
         E1_data = v1.get()
         E2_data = v2.get()
@@ -31,7 +33,7 @@ def onclick_view():
 
     #date:2.12.14 . by:Pragya. for dropdownlist of "to" and "from"
     cur = db.cursor()
-    cur.execute("select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA= 'student' and TABLE_NAME = 'attendance'")
+    cur.execute("select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA= 'student' and TABLE_NAME = '%s'" %subject)
     a = cur.fetchall()
     list = []
     for i in range(2, len(a)):
@@ -47,12 +49,13 @@ def onclick_view():
     win2.mainloop()
 
 def onclick_mark():
+    subject = variable.get()
     # you must create a Cursor object. It will let
     #  you execute all the queries you need
     cur = db.cursor()
 
     date = time.strftime("%x")
-    cur.execute("ALTER TABLE attendance ADD `%s` INT(2) NOT NULL DEFAULT '0'" %date)
+    cur.execute("ALTER TABLE %s ADD `%s` INT(2) NOT NULL DEFAULT '0'" %(subject,date))
     
     def onclick_next():
         try:
@@ -77,7 +80,7 @@ def onclick_mark():
                     my_id = arduino.readline()   #read the data from arduino
                     if my_id != -2:
                         try:
-                            cur.execute("UPDATE attendance SET `%s`= %d WHERE Roll_Number=(SELECT Roll_Number FROM student_att WHERE Id= %d)" %(date,v3_value, int(my_id)))
+                            cur.execute("UPDATE %s SET `%s`= %d WHERE Roll_Number=(SELECT Roll_Number FROM student_att WHERE Id= %d)" %(variable, date,v3_value, int(my_id)))
                         except:
                             err3 = 'Failed to read from arduino. Try burning the code to arduino again'
                             lab3 = Label(win3, text = err3).pack() 
