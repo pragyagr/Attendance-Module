@@ -20,7 +20,6 @@ def onclick_view():
 
         #showing attendance of each student from selected dates
 
-        
         E1_data = v1.get()
         E2_data = v2.get()
         print E1_data
@@ -102,32 +101,49 @@ def onclick_mark():
         except:
             error_msg = 'number you entered is not an integer'
             label_err = Label (win3, text=error_msg, fg='red').pack()
-        flag=0
-        while 1:
-            if flag==0:
-                try:
-                    err1 = "Trying...", device
-                    lab1 = Label(win3, text=err1).pack()
-                    arduino = serial.Serial(device, 9600)
-                    flag = 1
-                except:
-                    err2 = "Failed to connect on ", device
-                    lab2 = Label(win3, text = err2).pack()
-                    flag = 0
+            
+        try:
+            err1 = "Trying...", device
+            lab1 = Label(win3, text=err1).pack()
+            arduino = serial.Serial(device, 9600)
+            flag = 1
+        except:
+            err2 = "Failed to connect on ", device
+            lab2 = Label(win3, text = err2).pack()
+            flag = 0
+        
+        def attendance():
+            def nextstudent():
+                tempwin.destroy()
+                attendance()
+            tempwin = Tk()
+            cur = db.cursor()
+            nextstudent_button = Button(tempwin, text ="Next Student", command= nextstudent).pack()
+            flag = 1
             if flag==1:
-                try:
-                    my_id = arduino.readline()   #read the data from arduino
-                    if my_id != -2:
-                        try:
-                            cur.execute("UPDATE %s SET `%s`= %d WHERE Roll_Number=(SELECT Roll_Number FROM student_att WHERE Id= %d)" %(variable, date,v3_value, int(my_id)))
-                        except:
-                            err3 = 'Failed to read from arduino. Try burning the code to arduino again'
-                            lab3 = Label(win3, text = err3).pack() 
-                except:
-                    err4 = "Failed to get data from Arduino!"
-                    lab4 = Label(win3, text = err4).pack()
-                    flag = 0;
+                #try:
+                print "place finger assshole"
+                my_id = arduino.readline()   #read the data from arduino
+                print "here"
+                if my_id != -2:
+                    #try:
+                    cur.execute("SELECT Name FROM student_att WHERE Id=%d" %(int(my_id)))
+                    name = cur.fetchone()
+                    print name
+                    text_student = "Identified!",name
+                    label_studentname = Label(tempwin, text= text_student).pack()
+                    cur.execute("UPDATE `%s` SET `%s`= %d WHERE Roll_Number=(SELECT Roll_Number FROM student_att WHERE Id= %d)" %(subject, date,v3_value, int(my_id)))
+                    flag = 1
+##                        except:
+##                            err3 = 'Failed to read from arduino. Try burning the code to arduino again'
+##                            lab3 = Label(win3, text = err3).pack() 
+##                except:
+##                    err4 = "Failed to get data from Arduino!"
+##                    print 'error', sys.exc_info()[0]      
+##                    lab4 = Label(win3, text = err4).pack()
             db.commit()
+            
+        attendance()
     #if my_id != -2:
         #try:
         #cur.execute("UPDATE attendance SET `%s`='1' WHERE Roll_Number=(SELECT Roll_Number FROM student_att WHERE Id= %d)" %(date, my_id))
